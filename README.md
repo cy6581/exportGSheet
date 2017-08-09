@@ -7,7 +7,7 @@ Simple PDF export for individual Google Sheets + UI interface in Google Apps Scr
 **Features**
 - Export a **single active spreadsheet** as PDF with one click. 
 - Export either the full sheet or a highlighted range. 
-- Exports formula-calculated cells as display values to avoid #REF errors.
+- Exports formula-calculated cells as display values to avoid #REF errors. Leaves formatting intact.
 - Creates new button on the UI menu row called 'Save to PDF', with options.
 
 
