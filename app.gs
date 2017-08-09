@@ -11,7 +11,7 @@ var folderId = "<Desination folder Id>"; // Google Id of destination folder, eg.
 *
 */
 
-function exportFunction (rangeLastRow, rangeLastCol) {
+function exportFunction (rangeLastRow, rangeLastCol, rangeFirstRow, rangeFirstCol) {
    
     // initialize params 
     var folder = DriveApp.getFolderById(folderId);
@@ -25,7 +25,7 @@ function exportFunction (rangeLastRow, rangeLastCol) {
     var tempSpreadsheet = SpreadsheetApp.open(tempSpreadsheet);
    
     // replace values, first param is spreadsheet file 
-    replaceValues(tempSpreadsheet, sheetName, rangeLastRow, rangeLastCol); 
+    replaceValues(tempSpreadsheet, sheetName, rangeLastRow, rangeLastCol, rangeFirstRow, rangeFirstCol); 
    
    
     // deletes the rest 
@@ -51,18 +51,26 @@ function exportFunction (rangeLastRow, rangeLastCol) {
 
   // replaces all values to DisplayValues 
   // theSpreadsheet is the spreadsheet file, sheetName is sheet level 
-function replaceValues (theSpreadsheet, sheetName, rangeLastRow, rangeLastCol) {
+function replaceValues (theSpreadsheet, sheetName, rangeLastRow, rangeLastCol, rangeFirstRow, rangeFirstCol) {
   var theSheet = theSpreadsheet.getSheetByName(sheetName);
-  var range = theSheet.getRange(1, 1, rangeLastRow, rangeLastCol);
+  var range = theSheet.getRange(rangeFirstRow, rangeFirstCol, rangeLastRow, rangeLastCol);
   var copyValues = range.getDisplayValues();
   
   range.clearContent();
   
   if (rangeLastRow < theSheet.getLastRow()){
     theSheet.getRange(rangeLastRow+1, 1, theSheet.getLastRow(), theSheet.getLastColumn()).clear();
-  } if(rangeLastCol < theSheet.getLastColumn()){
+  } 
+  if(rangeLastCol < theSheet.getLastColumn()){
     theSheet.getRange(1, rangeLastCol+1, theSheet.getLastRow(), theSheet.getLastColumn()).clear();
   }
+  if(rangeFirstRow > 1){
+    theSheet.getRange(1, 1, rangeFirstRow-1, theSheet.getLastColumn()).clear();
+  }
+  if(rangeFirstCol > 1){
+    theSheet.getRange(1, 1, theSheet.getLastRow(), rangeFirstCol-1).clear();
+  }
+  
   
   range.setValues(copyValues);
 }
@@ -93,9 +101,11 @@ function onOpen() {
 // UI functions
 function exportRange() {
   var sourceSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var rangeFirstRow = sourceSheet.getActiveRange().getRow();
+  var rangeFirstCol = sourceSheet.getActiveRange().getColumn();
   var rangeLastRow = sourceSheet.getActiveRange().getLastRow();
   var rangeLastCol = sourceSheet.getActiveRange().getLastColumn();
-  exportFunction(rangeLastRow, rangeLastCol);
+  exportFunction(rangeLastRow, rangeLastCol, rangeFirstRow, rangeFirstCol);
 }
 
 
@@ -103,6 +113,6 @@ function exportSheet() {
   var sourceSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   var rangeLastRow = sourceSheet.getLastRow();
   var rangeLastCol = sourceSheet.getLastColumn();
-  exportFunction(rangeLastRow, rangeLastCol);
+  exportFunction(rangeLastRow, rangeLastCol, 1, 1);
 }
 // end UI 
