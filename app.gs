@@ -36,6 +36,10 @@ function exportFunction (rangeLastRow, rangeLastCol, rangeFirstRow, rangeFirstCo
       }
     }
 
+    // hot fix for bug where a single sheet Spreadsheet is not read correctly 
+    // reactive tempSpreadsheet again
+    SpreadsheetApp.getUi().alert("Saving sheet " + tempSpreadsheet.getSheetByName(sheetName).getRange(nameRange).getDisplayValue());
+   
     saveToPdf(tempSpreadsheet, pdfName, folder); // first param must be a Spreadsheet file object
     
     DriveApp.getFileById(tempSpreadsheet.getId()).setTrashed(true); // delete tempSpreadsheet 
